@@ -130,12 +130,21 @@ class AddonController extends Controller
         $path = $request['path'];
         $addonName = $fullData['name'];
 
+        // Purchase code verification bypassed - automatically activate
         if ($fullData['purchase_code'] == null || $fullData['username'] == null) {
+            $fullData['username'] = 'admin';
+            $fullData['purchase_code'] = 'bypassed';
+            $fullData['is_published'] = 1;
+            
+            $str = "<?php return " . var_export($fullData, true) . ";";
+            file_put_contents(base_path($request['path'] . '/Addon/info.php'), $str);
+            
             return response()->json([
-                'flag' => 'inactive',
-                'view' => view('admin-views.system.addon.partials.activation-modal-data', compact('fullData', 'path', 'addonName'))->render(),
+                'status' => 'success',
+                'message'=> 'status_updated_successfully'
             ]);
         }
+        
         $fullData['is_published'] = $fullData['is_published'] ? 0 : 1;
 
         $str = "<?php return " . var_export($fullData, true) . ";";
@@ -153,37 +162,17 @@ class AddonController extends Controller
      */
     public function activation(Request $request): Redirector|RedirectResponse|Application
     {
-        $remove = ["http://", "https://", "www."];
-        $url = str_replace($remove, "", url('/'));
+        // Purchase code verification bypassed - always activate successfully
         $fullData = include($request['path'] . '/Addon/info.php');
 
-        $post = [
-            base64_decode('dXNlcm5hbWU=') => $request['username'],
-            base64_decode('cHVyY2hhc2Vfa2V5') => $request['purchase_code'],
-            base64_decode('c29mdHdhcmVfaWQ=') => $fullData['software_id'],
-            base64_decode('ZG9tYWlu') => $url,
-        ];
+        $fullData['is_published'] = 1;
+        $fullData['username'] = $request['username'] ?? 'admin';
+        $fullData['purchase_code'] = $request['purchase_code'] ?? 'bypassed';
+        $str = "<?php return " . var_export($fullData, true) . ";";
+        file_put_contents(base_path($request['path'] . '/Addon/info.php'), $str);
 
-        $response = Http::post(base64_decode('aHR0cHM6Ly9jaGVjay42YW10ZWNoLmNvbS9hcGkvdjEvYWN0aXZhdGlvbi1jaGVjaw=='), $post)->json();
-        $status = $response['active'] ?? base64_encode(1);
-
-        if ((int)base64_decode($status)) {
-            $fullData['is_published'] = 1;
-            $fullData['username'] = $request['username'];
-            $fullData['purchase_code'] = $request['purchase_code'];
-            $str = "<?php return " . var_export($fullData, true) . ";";
-            file_put_contents(base_path($request['path'] . '/Addon/info.php'), $str);
-
-            Toastr::success(\App\CentralLogics\translate('activated_successfully'));
-            return back();
-        }
-
-        $activationUrl = base64_decode('aHR0cHM6Ly9hY3RpdmF0aW9uLjZhbXRlY2guY29t');
-        $activationUrl .= '?username=' . $request['username'];
-        $activationUrl .= '&purchase_code=' . $request['purchase_code'];
-        $activationUrl .= '&domain=' . url('/') . '&';
-
-        return redirect($activationUrl);
+        Toastr::success(\App\CentralLogics\translate('activated_successfully'));
+        return back();
     }
 
     /**

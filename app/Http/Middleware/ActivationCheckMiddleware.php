@@ -20,11 +20,7 @@ class ActivationCheckMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->is('admin/auth/login')) {
-            if (!$this->actch()) {
-                return Redirect::away(base64_decode('aHR0cHM6Ly82YW10ZWNoLmNvbS9zb2Z0d2FyZS1hY3RpdmF0aW9u'))->send();
-            }
-        }
+        // Activation check bypassed - always allow requests
         return $next($request);
     }
 }

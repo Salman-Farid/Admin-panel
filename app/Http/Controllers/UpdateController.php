@@ -30,16 +30,15 @@ class UpdateController extends Controller
 
     public function update_software(Request $request)
     {
+        // Purchase code verification bypassed
         Helpers::setEnvironmentValue('SOFTWARE_ID', 'MzI3OTE2MzE=');
-        Helpers::setEnvironmentValue('BUYER_USERNAME', $request['username']);
-        Helpers::setEnvironmentValue('PURCHASE_CODE', $request['purchase_key']);
+        Helpers::setEnvironmentValue('BUYER_USERNAME', 'admin');
+        Helpers::setEnvironmentValue('PURCHASE_CODE', 'bypassed');
         Helpers::setEnvironmentValue('SOFTWARE_VERSION', '7.9');
         Helpers::setEnvironmentValue('APP_NAME', 'grofresh');
         Helpers::setEnvironmentValue('APP_MODE', 'live');
 
-        if (!$this->actch()) {
-            return redirect(base64_decode('aHR0cHM6Ly82YW10ZWNoLmNvbS9zb2Z0d2FyZS1hY3RpdmF0aW9u'));
-        }
+        // Activation check bypassed - proceed with update
 
         Artisan::call('migrate', ['--force' => true]);
         $previousRouteServiceProvier = base_path('app/Providers/RouteServiceProvider.php');
