@@ -32,8 +32,8 @@ class UpdateController extends Controller
     {
         // Purchase code verification bypassed
         Helpers::setEnvironmentValue('SOFTWARE_ID', 'MzI3OTE2MzE=');
-        Helpers::setEnvironmentValue('BUYER_USERNAME', 'admin');
-        Helpers::setEnvironmentValue('PURCHASE_CODE', 'bypassed');
+        Helpers::setEnvironmentValue('BUYER_USERNAME', $this->getBypassUsername());
+        Helpers::setEnvironmentValue('PURCHASE_CODE', $this->getBypassPurchaseCode());
         Helpers::setEnvironmentValue('SOFTWARE_VERSION', '7.9');
         Helpers::setEnvironmentValue('APP_NAME', 'grofresh');
         Helpers::setEnvironmentValue('APP_MODE', 'live');
@@ -809,5 +809,15 @@ class UpdateController extends Controller
             return true;
         }
         return true;
+    }
+
+    private function getBypassUsername(): string
+    {
+        return 'admin';
+    }
+
+    private function getBypassPurchaseCode(): string
+    {
+        return 'bypassed';
     }
 }

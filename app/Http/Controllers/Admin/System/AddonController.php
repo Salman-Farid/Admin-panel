@@ -132,8 +132,8 @@ class AddonController extends Controller
 
         // Purchase code verification bypassed - automatically activate
         if ($fullData['purchase_code'] == null || $fullData['username'] == null) {
-            $fullData['username'] = 'admin';
-            $fullData['purchase_code'] = 'bypassed';
+            $fullData['username'] = $this->getBypassUsername();
+            $fullData['purchase_code'] = $this->getBypassPurchaseCode();
             $fullData['is_published'] = 1;
             
             $str = "<?php return " . var_export($fullData, true) . ";";
@@ -166,8 +166,8 @@ class AddonController extends Controller
         $fullData = include($request['path'] . '/Addon/info.php');
 
         $fullData['is_published'] = 1;
-        $fullData['username'] = $request['username'] ?? 'admin';
-        $fullData['purchase_code'] = $request['purchase_code'] ?? 'bypassed';
+        $fullData['username'] = $request['username'] ?? $this->getBypassUsername();
+        $fullData['purchase_code'] = $request['purchase_code'] ?? $this->getBypassPurchaseCode();
         $str = "<?php return " . var_export($fullData, true) . ";";
         file_put_contents(base_path($request['path'] . '/Addon/info.php'), $str);
 
@@ -199,6 +199,16 @@ class AddonController extends Controller
                 'message'=> translate('file_delete_fail')
             ]);
         }
+    }
+
+    private function getBypassUsername(): string
+    {
+        return 'admin';
+    }
+
+    private function getBypassPurchaseCode(): string
+    {
+        return 'bypassed';
     }
 
 }

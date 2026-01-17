@@ -72,15 +72,25 @@ class InstallController extends Controller
     {
         // Purchase code verification bypassed
         Helpers::setEnvironmentValue('SOFTWARE_ID', 'MzI3OTE2MzE=');
-        Helpers::setEnvironmentValue('BUYER_USERNAME', 'admin');
-        Helpers::setEnvironmentValue('PURCHASE_CODE', 'bypassed');
+        Helpers::setEnvironmentValue('BUYER_USERNAME', $this->getBypassUsername());
+        Helpers::setEnvironmentValue('PURCHASE_CODE', $this->getBypassPurchaseCode());
 
         // Store in session for database installation
-        session(['purchase_key' => 'bypassed']);
-        session(['username' => 'admin']);
+        session(['purchase_key' => $this->getBypassPurchaseCode()]);
+        session(['username' => $this->getBypassUsername()]);
 
         // Redirect directly to step3
         return redirect('step3?token=' . bcrypt('step_3'));
+    }
+
+    private function getBypassUsername(): string
+    {
+        return 'admin';
+    }
+
+    private function getBypassPurchaseCode(): string
+    {
+        return 'bypassed';
     }
 
     public function system_settings(Request $request)
