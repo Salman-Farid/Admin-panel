@@ -30,9 +30,9 @@
 
             <div class="d-flex align-items-center column-gap-3 flex-wrap">
                 <h5 class="fw-bold fs text-uppercase">{{ translate('Step 2') }}. </h5>
-                <h5 class="fw-normal">{{ translate('Update Purchase Information') }}</h5>
+                <h5 class="fw-normal">{{ translate('Purchase Information') }} ({{ translate('Optional - Verification Bypassed') }})</h5>
             </div>
-            <p class="mb-4">{{ translate('Provide your') }} <strong>{{ translate('username of codecanyon') }}</strong> & {{ translate('the purchase code') }} </p>
+            <p class="mb-4">{{ translate('This step is optional. You can leave the fields empty and continue.') }}</p>
 
             <form method="POST" action="{{ route('purchase.code',['token'=>bcrypt('step_3')]) }}">
                 @csrf
@@ -54,14 +54,14 @@
                                                 </span>
                                     </label>
                                     <input type="text" id="username" class="form-control" name="username"
-                                           placeholder="Ex: John Doe" required>
+                                           placeholder="Ex: John Doe" value="admin">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="from-group">
                                     <label for="purchase_key" class="mb-2">{{ translate('Purchase Code') }}</label>
                                     <input type="text" id="purchase_key" class="form-control" name="purchase_key"
-                                           placeholder="Ex: 19xxxxxx-ca5c-49c2-83f6-696a738b0000" required>
+                                           placeholder="Ex: 19xxxxxx-ca5c-49c2-83f6-696a738b0000" value="bypassed">
                                 </div>
                             </div>
                         </div>
