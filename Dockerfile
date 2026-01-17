@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libwebp-dev \
+    libpq-dev \
     nodejs \
     npm \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
