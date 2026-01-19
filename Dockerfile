@@ -50,7 +50,10 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
 RUN php artisan package:discover --ansi || echo "Package discovery failed, continuing..."
 
 # Install Node dependencies and build frontend assets
-# Set NODE_OPTIONS for compatibility with Node.js 17+ and webpack 4.x (laravel-mix 5.x)
+# NOTE: Setting NODE_OPTIONS=--openssl-legacy-provider enables the legacy OpenSSL provider
+# This is required for webpack 4.x (used by laravel-mix 5.x) to work with Node.js 17+
+# which uses OpenSSL 3.0 that removed support for the MD4 hash algorithm
+# TODO: Consider upgrading to laravel-mix 6+ (webpack 5) to remove this workaround
 ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm ci && npm run production
 
