@@ -50,6 +50,8 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
 RUN php artisan package:discover --ansi || echo "Package discovery failed, continuing..."
 
 # Install Node dependencies and build frontend assets
+# Set NODE_OPTIONS for compatibility with Node.js 17+ and webpack 4.x (laravel-mix 5.x)
+ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm ci && npm run production
 
 # Set proper file permissions for Laravel storage and bootstrap/cache directories
