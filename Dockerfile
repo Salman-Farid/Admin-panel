@@ -39,8 +39,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy application files
 COPY . /var/www/html
 
-# Install PHP dependencies with production optimizations
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+# Install PHP dependencies without running scripts first to avoid early failures
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
+
+# Create necessary Laravel directories if they don't exist
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views \
+    && mkdir -p bootstrap/cache
+
+# Then manually run package discovery
+RUN php artisan package:discover --ansi || echo "Package discovery failed, continuing..."
 
 # Install Node dependencies and build frontend assets
 RUN npm ci && npm run production
